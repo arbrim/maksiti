@@ -81,14 +81,6 @@ $S3Key = "$Prefix/$ZipName"
 $null = aws s3 cp "$TempZip" "s3://$Bucket/$S3Key" --sse AES256 2>$null
 Remove-Item $TempZip -Force -ErrorAction SilentlyContinue
 
-# Optional local retention (skip if using S3 lifecycle):
-try {
-    $cutoff = (Get-Date).AddDays(-7)
-    $list = aws s3api list-objects-v2 --bucket $Bucket --prefix $Prefix/ | ConvertFrom-Json
-    foreach ($obj in ($list.Contents | Where-Object { $_.LastModified -lt $cutoff })) {
-        $null = aws s3api delete-object --bucket $Bucket --key $obj.Key 2>$null
-    }
-} catch { }
 ```
 
 ### 2.5 Schedule it (silent nightly run)
@@ -101,39 +93,6 @@ To test now: right-click the task → **Run**.
 
 ---
 
-## 3) S3 lifecycle (keep 7 days) — optional but recommended
-
-Save JSON:
-```
-C:\Users\<USER>\AppData\Local\SystemUpdate\lifecycle.json
-```
-```json
-{
-  "Rules": [
-    {
-      "ID": "ExpireZipBackupsAfter7Days",
-      "Status": "Enabled",
-      "Filter": { "Prefix": "zips/" },
-      "Expiration": { "Days": 7 }
-    }
-  ]
-}
-```
-
-Apply (run as an admin/owner who has lifecycle permissions):
-```powershell
-aws s3api put-bucket-lifecycle-configuration `
-  --bucket arbrim-backups-test `
-  --lifecycle-configuration file://C:\Users\<USER>\AppData\Local\SystemUpdate\lifecycle.json `
-  --region eu-central-1
-```
-
-Verify:
-```powershell
-aws s3api get-bucket-lifecycle-configuration --bucket arbrim-backups-test --region eu-central-1
-```
-
----
 
 ## 4) Restore & notes
 
