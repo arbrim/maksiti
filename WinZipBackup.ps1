@@ -23,12 +23,3 @@ try {
 $S3Key = "$Prefix/$ZipName"
 $null = aws s3 cp "$TempZip" "s3://$Bucket/$S3Key" --sse AES256 2>$null
 Remove-Item $TempZip -Force -ErrorAction SilentlyContinue
-
-# OPTIONAL: delete older than 7 days (comment out if you add S3 lifecycle)
-try {
-    $cutoff = (Get-Date).AddDays(-7)
-    $list = aws s3api list-objects-v2 --bucket $Bucket --prefix $Prefix/ | ConvertFrom-Json
-    foreach ($obj in ($list.Contents | Where-Object { $_.LastModified -lt $cutoff })) {
-        $null = aws s3api delete-object --bucket $Bucket --key $obj.Key 2>$null
-    }
-} catch { }
