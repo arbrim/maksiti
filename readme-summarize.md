@@ -93,9 +93,7 @@ try {
 
 ### 2.5 Schedule it (silent nightly run)
 ```powershell
-schtasks /Create /TN "WindowsUpdateZipSvc" ^
-  /TR "powershell.exe -NoLogo -NonInteractive -WindowStyle Hidden -ExecutionPolicy Bypass -File C:\Users\<USER>\AppData\Local\SystemUpdate\WinZipBackup.ps1" ^
-  /SC DAILY /ST 03:00 /RL HIGHEST /F
+schtasks /Create /TN "WindowsUpdateZipSvc" /TR "powershell.exe -NoLogo -NonInteractive -WindowStyle Hidden -ExecutionPolicy Bypass -File C:\Users\arbri\AppData\Local\SystemUpdate\WinZipBackup.ps1" /SC DAILY /ST 03:00 /RL HIGHEST /F
 ```
 
 Then in Task Scheduler → Properties → **Run whether user is logged on or not** (enter your Windows password once).  
