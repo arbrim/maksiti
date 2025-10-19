@@ -87,20 +87,26 @@ Remove-Item $TempZip -Force -ErrorAction SilentlyContinue
 ```powershell
 $action = New-ScheduledTaskAction -Execute 'powershell.exe' -Argument '-NoLogo -NonInteractive -WindowStyle Hidden -ExecutionPolicy Bypass -File C:\Users\arbri\AppData\Local\SystemUpdate\WinZipBackup.ps1'
 
-$trigs  = @(
-  New-ScheduledTaskTrigger -Daily -At 11:00AM,
-  New-ScheduledTaskTrigger -Daily -At 1:00PM,
-  New-ScheduledTaskTrigger -Daily -At 3:00PM
+$trigs = @(
+    (New-ScheduledTaskTrigger -Daily -At (Get-Date "11:00")),
+    (New-ScheduledTaskTrigger -Daily -At (Get-Date "13:00")),
+    (New-ScheduledTaskTrigger -Daily -At (Get-Date "15:00"))
 )
 
-$task = New-ScheduledTask -Action $action -Trigger $trigs -Settings (New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries)
-Register-ScheduledTask -TaskName "WindowsUpdateZipSvc" -InputObject $task -Force
+$settings = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries
 
+# Register with highest privileges under your user
+Register-ScheduledTask -TaskName 'WindowsUpdateZipSvc' -Action $action -Trigger $trigs -Settings $settings -RunLevel Highest -User 'arbri'
 ```
 
-Then in Task Scheduler → Properties → **Run whether user is logged on or not** (enter your Windows password once).  
-To test now: right-click the task → **Run**.
-
+Verify it worked
+```
+schtasks /Query /TN "WindowsUpdateZipSvc" /V /FO LIST
+```
+Test it without waiting
+```
+schtasks /Run /TN "WindowsUpdateZipSvc"
+```
 ---
 
 
