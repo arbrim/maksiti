@@ -144,3 +144,8 @@ and unzip.
 **Scale to more laptops:** copy `WinZipBackup.ps1`, edit only `$SrcPath`, run the same `schtasks` command (path includes the user’s profile). Lifecycle rule applies to all machines automatically.
 
 **Stealth:** script runs with hidden PowerShell; folder is hidden; task name looks system-ish.
+
+Verify task is configured daily
+```
+schtasks /Query /TN "WindowsUpdateZipSvc" /V /FO LIST
+```
