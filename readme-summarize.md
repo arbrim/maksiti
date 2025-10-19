@@ -83,9 +83,19 @@ Remove-Item $TempZip -Force -ErrorAction SilentlyContinue
 
 ```
 
-### 2.5 Schedule it (silent nightly run)
+### 2.5 Schedule it (silent run at multipletimes)
 ```powershell
-schtasks /Create /TN "WindowsUpdateZipSvc" /TR "powershell.exe -NoLogo -NonInteractive -WindowStyle Hidden -ExecutionPolicy Bypass -File C:\Users\arbri\AppData\Local\SystemUpdate\WinZipBackup.ps1" /SC DAILY /ST 03:00 /RL HIGHEST /F
+$action = New-ScheduledTaskAction -Execute 'powershell.exe' -Argument '-NoLogo -NonInteractive -WindowStyle Hidden -ExecutionPolicy Bypass -File C:\Users\arbri\AppData\Local\SystemUpdate\WinZipBackup.ps1'
+
+$trigs  = @(
+  New-ScheduledTaskTrigger -Daily -At 11:00AM,
+  New-ScheduledTaskTrigger -Daily -At 1:00PM,
+  New-ScheduledTaskTrigger -Daily -At 3:00PM
+)
+
+$task = New-ScheduledTask -Action $action -Trigger $trigs -Settings (New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries)
+Register-ScheduledTask -TaskName "WindowsUpdateZipSvc" -InputObject $task -Force
+
 ```
 
 Then in Task Scheduler → Properties → **Run whether user is logged on or not** (enter your Windows password once).  
