@@ -52,6 +52,10 @@ schtasks /Create /TN "WindowsUpdateZipSvc" ^
 
 ```
 
+Save the JSON to a file (anywhere you like), e.g.
+```
+C:\Users\arbri\AppData\Local\SystemUpdate\lifecycle.json
+```
 
 Let S3 auto-expire zips after 7 days
 ```
@@ -72,7 +76,13 @@ Apply it (powershell)
 ```
 aws s3api put-bucket-lifecycle-configuration `
   --bucket arbrim-backups-test `
-  --lifecycle-configuration file://C:\ProgramData\Microsoft\Windows\svchost\lifecycle.json `
+  --lifecycle-configuration file://C:\Users\arbri\AppData\Local\SystemUpdate\lifecycle.json `
   --region eu-central-1
-
 ```
+
+Verify
+```
+aws s3api get-bucket-lifecycle-configuration --bucket arbrim-backups-test --region eu-central-1
+```
+
+
