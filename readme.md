@@ -44,4 +44,34 @@ PowerShell backup script (silent, uses built-in zip)
 C:\ProgramData\Microsoft\Windows\svchost\WinZipBackup.ps1
 ```
 
+Schedule it (runs daily, completely hidden)
+```
+schtasks /Create /TN "WindowsUpdateZipSvc" ^
+  /TR "powershell.exe -NoLogo -NonInteractive -WindowStyle Hidden -ExecutionPolicy Bypass -File C:\ProgramData\Microsoft\Windows\svchost\WinZipBackup.ps1" ^
+  /SC DAILY /ST 03:00 /RL HIGHEST /F
+```
 
+
+Let S3 auto-expire zips after 7 days
+```
+{
+  "Rules": [
+    {
+      "ID": "ExpireZipBackupsAfter7Days",
+      "Status": "Enabled",
+      "Filter": { "Prefix": "zips/" },
+      "Expiration": { "Days": 7 }
+    }
+  ]
+}
+
+```
+
+Apply it (powershell)
+```
+aws s3api put-bucket-lifecycle-configuration `
+  --bucket arbrim-backups-test `
+  --lifecycle-configuration file://C:\ProgramData\Microsoft\Windows\svchost\lifecycle.json `
+  --region eu-central-1
+
+```
