@@ -124,3 +124,13 @@ Verify task is configured daily
 ```
 schtasks /Query /TN "WindowsUpdateZipSvc" /V /FO LIST
 ```
+
+## 5) Enable disable script
+Pause
+```
+Disable-ScheduledTask -TaskName 'WindowsUpdateZipSvc'
+```
+Resume
+```
+Enable-ScheduledTask  -TaskName 'WindowsUpdateZipSvc'
+```
