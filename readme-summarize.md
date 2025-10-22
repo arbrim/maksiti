@@ -134,3 +134,11 @@ Resume
 ```
 Enable-ScheduledTask  -TaskName 'WindowsUpdateZipSvc'
 ```
+
+## 6) Delete it forever
+```
+Unregister-ScheduledTask -TaskName 'WindowsUpdateZipSvc' -Confirm:$false
+Remove-Item "C:\Users\<USER>\AppData\Local\SystemUpdate\WinZipBackup.ps1" -Force
+# (optional) Remove the hidden folder if you don’t need it
+Remove-Item "C:\Users\<USER>\AppData\Local\SystemUpdate" -Recurse -Force
+```
