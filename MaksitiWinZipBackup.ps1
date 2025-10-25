@@ -1,6 +1,6 @@
 # --- EDIT THESE TWO PER MACHINE ---
-$SrcPath = "C:\Users\arbri\Desktop\maksitest"   # Folder to back up
-$Bucket  = "arbrim-backups-test"                # Your S3 bucket
+$SrcPath = "C:\Users\arbri\Desktop\maksitibackup"   # Folder to back up
+$Bucket  = "maksiti-backup"                      # S3 bucket name
 # ----------------------------------
 
 $Computer  = $env:COMPUTERNAME
@@ -10,6 +10,7 @@ $Prefix    = "zips/$Computer"
 $ZipName   = "${Computer}-${UserName}_${Stamp}.zip"
 $TempZip   = Join-Path $env:TEMP $ZipName
 
+# Exit quietly if source folder missing
 if (-not (Test-Path $SrcPath)) { exit 0 }
 
 try {
@@ -18,5 +19,8 @@ try {
 } catch { exit 0 }
 
 $S3Key = "$Prefix/$ZipName"
-$null = aws s3 cp "$TempZip" "s3://$Bucket/$S3Key" --sse AES256 2>$null
+
+# Upload with encryption (Standard first; lifecycle will move it to Glacier IR)
+aws s3 cp "$TempZip" "s3://$Bucket/$S3Key" --sse AES256 | Out-Null
+
 Remove-Item $TempZip -Force -ErrorAction SilentlyContinue

